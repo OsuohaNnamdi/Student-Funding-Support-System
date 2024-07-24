@@ -1,0 +1,43 @@
+.dashboard {
+    padding: 20px;
+  }
+  
+  .applications-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  
+  .application-card {
+    background-color: #fff;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    width: 200px;
+    cursor: pointer;
+    transition: transform 0.3s;
+  }
+  
+  .application-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .application-details {
+    margin-top: 20px;
+  }
+  
+  .download-btn {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #1eb2a6;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+  }
+  
+  .download-btn:hover {
+    background-color: #17a598;
+  }
+  

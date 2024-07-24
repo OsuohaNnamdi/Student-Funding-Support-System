@@ -1,0 +1,25 @@
+.price {
+  padding: 40px 0;
+}
+
+.price .container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.price h1 {
+  font-size: 50px;
+  margin: 20px 0;
+  color: #1eb2a6;
+}
+
+.price h1 span {
+  font-size: 20px;
+  margin-right: 5px;
+  color: #000;
+}
+
+.price p {
+  color: grey;
+  margin: 20px 0;
+}

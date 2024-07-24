@@ -1,0 +1,60 @@
+.price-card-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+  }
+  
+  .price-card {
+    flex: 1 1 calc(33.333% - 20px); /* 3 cards per row with space between */
+    max-width: calc(33.333% - 20px);
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .price-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  }
+  
+  .price-card-title {
+    font-size: 20px;
+    color: #333;
+  }
+  
+  .price-card-price {
+    font-size: 40px;
+    color: #1eb2a6;
+    margin: 10px 0;
+  }
+  
+  .price-card-price span {
+    font-size: 20px;
+    color: #000;
+  }
+  
+  .price-card-desc {
+    color: grey;
+    margin: 20px 0;
+  }
+  
+  .outline-btn {
+    background-color: transparent;
+    border: 2px solid #1eb2a6;
+    color: #1eb2a6;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  .outline-btn:hover {
+    background-color: #1eb2a6;
+    color: #fff;
+  }
+  
