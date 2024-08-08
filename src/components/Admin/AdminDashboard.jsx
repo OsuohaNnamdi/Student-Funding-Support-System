@@ -1,50 +1,39 @@
-import React, { useState } from 'react';
-import './adminFunding.css';
+import React, { useState, useEffect } from 'react';
+import axiosInstance from '../Auth/axiosInstance'
+import './adminDashboard.css';
 import Back from '../common/back/Back';
 
-const applicationsData = [
-  {
-    id: 1,
-    name: 'John Doe',
-    email: 'john@example.com',
-    guardianName: 'Jane Doe',
-    gpa: 3.8,
-    matricNo: '123456',
-    financialNeed: 'Need financial aid for tuition',
-    statement: 'I am passionate about learning and need support to achieve my goals.',
-    documents: ['document1.pdf'],
-    document2: ['recommendation1.pdf'],
-    status: 'Pending'
-  },
-  {
-    id: 2,
-    name: 'Alice Smith',
-    email: 'alice@example.com',
-    guardianName: 'Bob Smith',
-    gpa: 3.7,
-    matricNo: '654321',
-    financialNeed: 'Need financial aid for accommodation',
-    statement: 'I have a strong academic record and need support to continue my education.',
-    documents: ['document2.pdf'],
-    document2: ['recommendation2.pdf'],
-    status: 'Pending'
-  }
-];
-
 const AdminDashboard = () => {
-  const [applications, setApplications] = useState(applicationsData);
+  const [applications, setApplications] = useState([]);
+
+  useEffect(() => {
+    
+    axiosInstance.get('/applications')
+      .then(response => setApplications(response.data))
+      .catch(error => console.error('Error fetching applications:', error));
+  }, []);
 
   const handleAccept = (id) => {
-    setApplications(applications.map(app => app.id === id ? { ...app, status: 'Accepted' } : app));
+    axiosInstance.put(`/applications/approve/${id}`)
+      .then(response => {
+        
+        setApplications(applications.map(app => app.id === id ? { ...app, approved: true, status: 'Accepted' } : app));
+      })
+      .catch(error => console.error('Error approving application:', error));
   };
 
   const handleReject = (id) => {
-    setApplications(applications.map(app => app.id === id ? { ...app, status: 'Rejected' } : app));
+    axiosInstance.put(`/applications/approve/${id}`)
+      .then(response => {
+        
+        setApplications(applications.map(app => app.id === id ? { ...app, approved: false, status: 'Rejected' } : app));
+      })
+      .catch(error => console.error('Error approving application:', error));
   };
 
   return (
   <>
-  <Back title='Applicant List'/>
+    <Back title='Applicant List'/>
     <div className="application-list-container">
       <h2>Application List</h2>
       {applications.map((application) => (
@@ -57,18 +46,19 @@ const AdminDashboard = () => {
             <p>Matric No: {application.matricNo}</p>
             <p>Financial Need: {application.financialNeed}</p>
             <p>Statement: {application.statement}</p>
-            <p>Status: <span className={`status ${application.status.toLowerCase()}`}>{application.status}</span></p>
+            <p>Status: <span className={`status ${application.approved ? 'accepted' : 'pending'}`}>
+              {application.approved ? 'Accepted' : 'Pending'}
+            </span></p>
           </div>
           <div className="application-actions">
-            <button onClick={() => handleAccept(application.id)} disabled={application.status !== 'Pending'}>Accept</button>
-            <button onClick={() => handleReject(application.id)} disabled={application.status !== 'Pending'}>Reject</button>
+            <button onClick={() => handleAccept(application.id)} disabled={application.approved}>Accept</button>
+            <button onClick={() => handleReject(application.id)} disabled={application.approved}>Reject</button>
           </div>
         </div>
       ))}
     </div>
-    </>
+  </>
   );
 };
 
 export default AdminDashboard;
-

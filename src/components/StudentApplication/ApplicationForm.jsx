@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import FormSteps from './FormSteps';
+import axiosInstance from '../Auth/axiosInstance' 
 import './application.css';
 
-const ApplicationForm = ({ blogId }) => { // Accept blogId if needed
+const ApplicationForm = () => {
   const [step, setStep] = useState(0);
   const [completedSteps, setCompletedSteps] = useState(0);
   const [formData, setFormData] = useState({
@@ -14,8 +15,8 @@ const ApplicationForm = ({ blogId }) => { // Accept blogId if needed
     enrolled: false,
     financialNeed: '',
     statement: '',
-    documents: [],
-    document2: [],
+    documents: null,
+    document2: null,
   });
 
   const steps = [
@@ -30,11 +31,11 @@ const ApplicationForm = ({ blogId }) => { // Accept blogId if needed
       case 0:
         return formData.name && formData.email && formData.guardianName;
       case 1:
-        return formData.gpa && formData.documents.length > 0 && formData.statement;
+        return formData.gpa && formData.documents && formData.statement;
       case 2:
         return formData.financialNeed && formData.matricNo;
       case 3:
-        return formData.document2.length > 0;
+        return formData.document2;
       default:
         return false;
     }
@@ -52,14 +53,52 @@ const ApplicationForm = ({ blogId }) => { // Accept blogId if needed
   };
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData({ ...formData, [name]: type === 'checkbox' ? checked : value });
+    const { name, value, type, checked, files } = e.target;
+    setFormData({
+      ...formData,
+      [name]: type === 'checkbox' ? checked : (files ? files[0] : value),
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+  
+     
+    const formDataToSend = new FormData();
+    formDataToSend.append('name', formData.name);
+    formDataToSend.append('email', formData.email);
+    formDataToSend.append('guardianName', formData.guardianName);
+    formDataToSend.append('gpa', formData.gpa);
+    formDataToSend.append('matricNo', formData.matricNo);
+    formDataToSend.append('enrolled', formData.enrolled);
+    formDataToSend.append('financialNeed', formData.financialNeed);
+    formDataToSend.append('statement', formData.statement);
+    if (formData.documents) {
+      formDataToSend.append('documents', formData.documents);
+    }
+    if (formData.document2) {
+      formDataToSend.append('document2', formData.document2);
+    }
+
+    try {
+      await axiosInstance.post('/api/v1/applications/add', formDataToSend, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      alert('Application submitted successfully');
+      
+    } catch (error) {
+      console.error('Failed to submit application:', error);
+      alert('Failed to submit application');
+    }
   };
 
   return (
     <div className="application-form">
       <FormSteps steps={steps} currentStep={step} completedSteps={completedSteps} />
-      <form>
+      <form onSubmit={handleSubmit}>
         {step === 0 && (
           <div>
             <h2>Personal Information</h2>
@@ -104,8 +143,9 @@ const ApplicationForm = ({ blogId }) => { // Accept blogId if needed
               <h4>Upload Result</h4>
               <input
                 type="file"
-                multiple
-                onChange={(e) => setFormData({ ...formData, documents: [...e.target.files] })}
+                name="documents"
+                onChange={handleChange}
+                required
               />
             </div>
             <textarea
@@ -142,8 +182,8 @@ const ApplicationForm = ({ blogId }) => { // Accept blogId if needed
             <h2>Letter of Recommendation</h2>
             <input
               type="file"
-              multiple
-              onChange={(e) => setFormData({ ...formData, document2: [...e.target.files] })}
+              name="document2"
+              onChange={handleChange}
               required
             />
           </div>
@@ -152,9 +192,15 @@ const ApplicationForm = ({ blogId }) => { // Accept blogId if needed
           <button type="button" onClick={handlePrevious} disabled={step === 0}>
             Previous
           </button>
-          <button type="button" onClick={handleNext} disabled={!isStepValid()}>
-            Next
-          </button>
+          {step === steps.length - 1 ? (
+            <button type="submit" disabled={!isStepValid()}>
+              Submit
+            </button>
+          ) : (
+            <button type="button" onClick={handleNext} disabled={!isStepValid()}>
+              Next
+            </button>
+          )}
         </div>
       </form>
     </div>

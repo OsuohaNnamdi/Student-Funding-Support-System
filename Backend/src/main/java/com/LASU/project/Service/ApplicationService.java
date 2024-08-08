@@ -15,4 +15,8 @@ public interface ApplicationService {
     void deleteById (Long id) throws GeneralException;
 
     List<Application> findAllApplication() throws GeneralException;
+
+    List<Application> findByEmail(String request) throws GeneralException;
+
+    void approveApplication(Long id, Application request);
 }

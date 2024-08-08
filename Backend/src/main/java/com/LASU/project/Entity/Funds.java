@@ -20,17 +20,16 @@ public class Funds {
     private String contact;
     private String amount;
     private String description;
-    private String logo;
 
     public Funds() {
     }
 
-    public Funds(String name, String contact, String amount, String description, String logo) {
+    public Funds(String name, String contact, String amount, String description) {
         this.name = name;
         this.contact = contact;
         this.amount = amount;
         this.description = description;
-        this.logo = logo;
+
     }
 
     public String getName() {
@@ -65,11 +64,4 @@ public class Funds {
         this.description = description;
     }
 
-    public String getLogo() {
-        return logo;
-    }
-
-    public void setLogo(String logo) {
-        this.logo = logo;
-    }
 }

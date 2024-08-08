@@ -8,10 +8,11 @@ const Header = () => {
 
   const nav = useNavigate();
 
-  const userType = 100;//localStorage.getItem("TYPE");
+  const userType = localStorage.getItem("TYPE");
   const userStudentType = localStorage.getItem("TYPES");
   const userSPONSORType = localStorage.getItem("TYPESS");
 
+  console.log(userStudentType);
   const logOut = () => {
     localStorage.clear();
     nav("/");
@@ -66,7 +67,7 @@ const Header = () => {
             <Link to='/'>Home</Link>
           </li>
           <li>
-            <Link to='/admin'>Verify Funder</Link>
+            <Link to='/admin'>Verify Application</Link>
           </li>
           <li>
             <Link to='/forms'>Tuition Fund</Link>
@@ -75,12 +76,16 @@ const Header = () => {
             <Link to='/funds'>Payment</Link>
           </li>
           <li>
-            <Link to='/about'>About</Link>
+            <Link to='/sponsors'>About</Link>
+          </li>
+          <li>
+            <Link to='/addfunds'>About</Link>
           </li>
           <li>
             <Link onClick={logOut}>Log out</Link>
           </li>
         </>
+        
       );
     } else {
       return (

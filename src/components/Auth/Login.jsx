@@ -6,7 +6,6 @@ import './Auth.css';
 const Auth = () => {
   const [formData, setFormData] = useState({
     email: '',
-    matricNumber: '',
     password: ''
   });
 
@@ -22,7 +21,6 @@ const Auth = () => {
     setIsStudent(role === 'student');
     setFormData({
       email: '',
-      matricNumber: '',
       password: ''
     });
   };
@@ -33,20 +31,20 @@ const Auth = () => {
       const url = 'http://localhost:8080/api/v1/login';
       const response = await axios.post(url, formData);
       const { profileDTO, token } = response.data;
-      const { Type, matricNumber: responseMatricNumber } = profileDTO;
-
-      switch (Type) {
+      const { accountType, matricNumber: responseMatricNumber } = profileDTO;
+       console.log(response.data)
+      switch (accountType) {
         case 'ADMIN':
-          localStorage.setItem('TYPE', Type);
+          localStorage.setItem('TYPE', accountType);
           break;
         case 'SPONSOR':
-          localStorage.setItem('TYPES', Type);
+          localStorage.setItem('TYPES', accountType);
           break;
         case 'STUDENT':
-          localStorage.setItem('TYPESS', Type);
+          localStorage.setItem('TYPESS', accountType);
           break;
         default:
-          console.error('Unknown user type:', Type);
+          console.error('Unknown user type:', accountType);
       }
 
       localStorage.setItem('profile', JSON.stringify(profileDTO));
@@ -88,8 +86,8 @@ const Auth = () => {
                   <label>Matriculation Number:</label>
                   <input
                     type="text"
-                    name="matricNumber"
-                    value={formData.matricNumber}
+                    name="email"
+                    value={formData.email}
                     onChange={handleChange}
                     required
                   />

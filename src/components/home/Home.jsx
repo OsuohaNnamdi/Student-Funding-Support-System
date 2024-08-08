@@ -8,13 +8,13 @@ const Home = () => {
 
   const navigate = useNavigate();
 
-  useEffect(() => {
+  // useEffect(() => {
 
-    const token = localStorage.getItem('jwtToken');
-    if (!token) {
-      navigate('/login');
-    }
-  }, [navigate]);
+  //   const token = localStorage.getItem('jwtToken');
+  //   if (!token) {
+  //     navigate('/login');
+  //   }
+  // }, [navigate]);
   return (
     <>
     

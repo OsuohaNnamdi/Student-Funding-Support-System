@@ -22,8 +22,8 @@ public class ApplicationController {
         this.applicationImplementation = applicationImplementation;
     }
 
-    @PostMapping
-    public ResponseEntity<String> createApplication(@RequestPart("application") Application application,
+    @PostMapping("/add")
+    public ResponseEntity<String> createApplication(@ModelAttribute Application application,
                                                     @RequestPart("documents") MultipartFile documents,
                                                     @RequestPart("document2") MultipartFile document2) {
         try {
@@ -34,10 +34,31 @@ public class ApplicationController {
         }
     }
 
+    @PutMapping("/approve/{id}")
+    public ResponseEntity<String> approveApplication(@PathVariable Long id, @RequestBody Application application) {
+        try {
+            applicationImplementation.approveApplication(id, application);
+            return ResponseEntity.ok("Application approved successfully");
+        } catch (GeneralException e) {
+            return ResponseEntity.status(500).body("Failed to approve application: " + e.getMessage());
+        }
+    }
+    
+
     @GetMapping
     public ResponseEntity<List<Application>> getAllApplications() {
         try {
             List<Application> applications = applicationImplementation.findAllApplication();
+            return ResponseEntity.ok(applications);
+        } catch (GeneralException e) {
+            return ResponseEntity.status(500).body(null);
+        }
+    }
+
+    @GetMapping("/{request}")
+    public ResponseEntity<List<Application>> getAllByEmail(@PathVariable String request) {
+        try {
+            List<Application> applications = applicationImplementation.findByEmail(request);
             return ResponseEntity.ok(applications);
         } catch (GeneralException e) {
             return ResponseEntity.status(500).body(null);

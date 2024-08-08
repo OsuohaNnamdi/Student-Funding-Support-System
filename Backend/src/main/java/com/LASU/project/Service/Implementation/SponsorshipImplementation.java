@@ -3,10 +3,13 @@ package com.LASU.project.Service.Implementation;
 import com.LASU.project.Entity.Sponsorship;
 import com.LASU.project.Exception.GeneralException;
 import com.LASU.project.Repository.SponsorshipRepository;
+import com.LASU.project.Service.CloudinaryService;
 import com.LASU.project.Service.SponsorshipService;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDateTime;
+
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -15,31 +18,29 @@ public class SponsorshipImplementation implements SponsorshipService {
 
 
     private final SponsorshipRepository sponsorshipRepository;
+    private final CloudinaryService cloudinaryService;
 
-    public SponsorshipImplementation(SponsorshipRepository sponsorshipRepository) {
+    public SponsorshipImplementation(SponsorshipRepository sponsorshipRepository, CloudinaryService cloudinaryService) {
         this.sponsorshipRepository = sponsorshipRepository;
+        this.cloudinaryService = cloudinaryService;
     }
 
     @Override
-    public void  saveSponsorship(Sponsorship request) throws GeneralException {
+    public void  saveSponsorship(Sponsorship sponsorship , MultipartFile logo) throws GeneralException, IOException {
 
-        Sponsorship sponsorship = new Sponsorship();
 
-        sponsorship.setDonorName(request.getDonorName());
-        sponsorship.setEmail(request.getEmail());
-        sponsorship.setNumStudents(request.getNumStudents());
-        sponsorship.setTotalAmount(request.getTotalAmount());
-        sponsorship.setPaymentMethod(request.getPaymentMethod());
-        sponsorship.setComments(request.getComments());
 
+        String response = cloudinaryService.uploadImage(logo);
+        sponsorship.setFile(response);
         sponsorshipRepository.save(sponsorship);
     }
 
     @Override
-    public void updateSponsorship(Long id, Sponsorship request) throws GeneralException {
+    public void updateSponsorship(Long id, Sponsorship request, MultipartFile logo) throws GeneralException {
 
         Sponsorship sponsorship = sponsorshipRepository.findById(id).orElseThrow(() -> new GeneralException("Sponsorship with id "+id+" is not present"));
 
+        String response = cloudinaryService.uploadImage(logo);
         if (sponsorship != null){
 
 
@@ -47,7 +48,8 @@ public class SponsorshipImplementation implements SponsorshipService {
             sponsorship.setEmail(request.getEmail());
             sponsorship.setNumStudents(request.getNumStudents());
             sponsorship.setTotalAmount(request.getTotalAmount());
-            sponsorship.setPaymentMethod(request.getPaymentMethod());
+            sponsorship.setFile(response);
+
             sponsorship.setComments(request.getComments());
         }
     }

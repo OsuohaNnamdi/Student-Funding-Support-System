@@ -18,7 +18,8 @@ public class ProfileMapper implements Function <Profile, ProfileDTO>
                 profile.getGender(),
                 profile.getDepartment(),
                 profile.getOrganisation(),
-                profile.getEmail()
+                profile.getEmail(),
+                profile.getAccountType()
 
         );
     }

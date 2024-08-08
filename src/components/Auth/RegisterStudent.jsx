@@ -19,25 +19,26 @@ const RegisterForm = () => {
     faculty: '',
     department: '',
     gender: '',
+    accountType: 'STUDENT',  // Default accountType
   });
 
   const [departments, setDepartments] = useState([]);
   const [isStudent, setIsStudent] = useState(true);
+  const nav = useNavigate();
 
   const handleRoleSwitch = (role) => {
-    setIsStudent(role === 'student');
-    setFormData({
-      name: '',
-      email: '',
-      password: '',
-      organization: '',
-      faculty: '',
-      department: '',
-      gender: '',
-    });
-    setDepartments([]);
-  };
-  const nav = useNavigate();
+  const newAccountType = role === 'student' ? 'STUDENT' : 'SPONSOR';
+  setIsStudent(role === 'student');
+  setFormData((prevData) => ({
+    ...prevData,
+    accountType: newAccountType,
+    faculty: '',
+    department: '',
+    gender: '',
+    organization: role === 'student' ? '' : prevData.organization, // Keep the organization if switching to sponsor
+  }));
+};
+
 
   const handleFacultyChange = (event) => {
     const selectedFacultyName = event.target.value;
@@ -55,7 +56,7 @@ const RegisterForm = () => {
     event.preventDefault();
     const url = 'http://localhost:8080/api/v1/register';
     try {
-      const response = await axios.post(url, formData);
+      await axios.post(url, formData);
       alert('Registration successful!');
       // Handle successful response
     } catch (error) {

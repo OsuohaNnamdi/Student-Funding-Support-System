@@ -10,9 +10,11 @@ import java.util.List;
 
 public interface FundsService {
 
-    void saveApplication(Funds funds, MultipartFile documents) throws IOException;
+    void saveApplication(Funds request) throws IOException;
 
-    void  updateFund(Long id, Funds fundDetails, MultipartFile documents) throws IOException;
+
+
+    void updateFund(Long id, Funds fundDetails) throws IOException;
 
     List<Funds> findAllFunds()throws IOException;
 

@@ -1,6 +1,7 @@
 package com.LASU.project.DTO;
 
 
+import com.LASU.project.Entity.Enum.AccountType;
 
 public record ProfileDTO(
 
@@ -9,6 +10,7 @@ public record ProfileDTO(
         String gender,
         String department,
         String organisation,
-        String email
+        String email,
+        AccountType accountType
 ) {
 }

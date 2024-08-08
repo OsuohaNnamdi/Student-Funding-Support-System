@@ -5,9 +5,12 @@ import com.LASU.project.Exception.GeneralException;
 import com.LASU.project.Service.Implementation.SponsorshipImplementation;
 import com.LASU.project.Service.SponsorshipService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -21,21 +24,24 @@ public class SponsorshipController {
         this.sponsorshipImplementation = sponsorshipImplementation;
     }
 
-    @PostMapping
-    public ResponseEntity<String> createSponsorship(@RequestBody Sponsorship sponsorship) {
+    @PostMapping("/add")
+    public ResponseEntity<?> createSponsorship(
+            @ModelAttribute Sponsorship sponsorship,
+            @RequestPart("document") MultipartFile document) {
         try {
-            sponsorshipImplementation.saveSponsorship(sponsorship);
-            return ResponseEntity.ok("Sponsorship created successfully");
-        } catch (GeneralException e) {
-            return ResponseEntity.status(500).body("Failed to create sponsorship: " + e.getMessage());
+            sponsorshipImplementation.saveSponsorship(sponsorship, document);
+            return new ResponseEntity<>("Sponsorship saved successfully", HttpStatus.CREATED);
+        }  catch (GeneralException | IOException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<String> updateSponsorship(@PathVariable Long id,
-                                                    @RequestBody Sponsorship sponsorshipDetails) {
+                                                    @ModelAttribute Sponsorship sponsorshipDetails,
+                                                    @RequestPart("logo") MultipartFile logo) {
         try {
-            sponsorshipImplementation.updateSponsorship(id, sponsorshipDetails);
+            sponsorshipImplementation.updateSponsorship(id, sponsorshipDetails, logo);
             return ResponseEntity.ok("Sponsorship updated successfully");
         } catch (GeneralException e) {
             return ResponseEntity.status(500).body("Failed to update sponsorship: " + e.getMessage());

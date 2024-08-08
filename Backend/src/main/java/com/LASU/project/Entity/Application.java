@@ -27,12 +27,12 @@ public class Application {
             private Boolean seen;
             private Boolean verify;
             private Boolean approved;
+            private String status;
             private String documents;
-
-
             private String document2;
 
-    public Application(Long id, String name, String email, String guardianName, String gpa, String matricNo, boolean enrolled, String financialNeed, String statement, Boolean seen, Boolean verify, Boolean approved, String documents, String document2) {
+
+    public Application(Long id, String name, String email, String guardianName, String gpa, String matricNo, boolean enrolled, String financialNeed, String statement, Boolean seen, Boolean verify, Boolean approved, String status, String documents, String document2) {
         this.id = id;
         this.name = name;
         this.email = email;
@@ -45,11 +45,9 @@ public class Application {
         this.seen = seen;
         this.verify = verify;
         this.approved = approved;
+        this.status = status;
         this.documents = documents;
         this.document2 = document2;
-    }
-
-    public Application() {
     }
 
     public String getName() {
@@ -138,6 +136,14 @@ public class Application {
 
     public void setApproved(Boolean approved) {
         this.approved = approved;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public String getDocuments() {

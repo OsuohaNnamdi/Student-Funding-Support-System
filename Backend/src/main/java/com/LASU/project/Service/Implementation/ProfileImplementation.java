@@ -53,6 +53,7 @@ public class ProfileImplementation implements ProfileService
 
             profile.setName(request.getName());
             profile.setGender(request.getGender());
+            profile.setAccountType(request.getAccountType());
             profile.setPassword(passwordEncoder.encode(request.getPassword()));
             profile.setFaculty(request.getFaculty());
             profile.setDepartment(request.getDepartment());

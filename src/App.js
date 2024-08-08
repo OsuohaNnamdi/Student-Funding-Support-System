@@ -9,9 +9,11 @@ import Pricing from "./components/pricing/Pricing"
 import RegisterStudent from "./components/Auth/RegisterStudent"
 import Login from "./components/Auth/Login"
 import AppliedScholarships from "./components/AppliedScholarship/AppliedScholarships"
-import AddScholarshipForm from "./components/Admin/AdminFundingForm"
+import AddScholarshipForm from "./components/Admin/AddScholarshipForm"
 import FundsTable from "./components/Admin/FundsTable"
 import ScholarShip from "./components/Scholarship/Scholarship"
+import SponsorshipTable from "./components/Admin/SponsorshipTable"
+import FundsForm from "./components/Admin/FundsForm"
 
 
 
@@ -28,6 +30,8 @@ function App() {
         <Routes>
 
           <Route exact path='/' element={<Home/>} />
+          <Route exact path='/sponsors' element={<SponsorshipTable/>} />
+          <Route exact path='/addfunds' element={<FundsForm/>} />
           <Route exact path='/funds' element={<FundsTable/>} />
           <Route exact path='/scholarship' element={<ScholarShip/>} />
           <Route exact path='/forms' element={<AddScholarshipForm/>} />

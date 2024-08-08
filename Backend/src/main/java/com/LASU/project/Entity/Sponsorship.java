@@ -20,22 +20,22 @@ public class Sponsorship {
     private String email;
     private int numStudents;
     private double totalAmount;
-    private String paymentMethod;
     private String comments;
+    private String file;
 
 
 
     public Sponsorship() {
     }
 
-    public Sponsorship(Long id, String donorName, String email, int numStudents, double totalAmount, String paymentMethod, String comments) {
+    public Sponsorship(Long id, String donorName, String email, int numStudents, double totalAmount, String comments, String file) {
         this.id = id;
         this.donorName = donorName;
         this.email = email;
         this.numStudents = numStudents;
         this.totalAmount = totalAmount;
-        this.paymentMethod = paymentMethod;
         this.comments = comments;
+        this.file = file;
     }
 
     public Long getId() {
@@ -78,19 +78,19 @@ public class Sponsorship {
         this.totalAmount = totalAmount;
     }
 
-    public String getPaymentMethod() {
-        return paymentMethod;
-    }
-
-    public void setPaymentMethod(String paymentMethod) {
-        this.paymentMethod = paymentMethod;
-    }
-
     public String getComments() {
         return comments;
     }
 
     public void setComments(String comments) {
         this.comments = comments;
+    }
+
+    public String getFile() {
+        return file;
+    }
+
+    public void setFile(String file) {
+        this.file = file;
     }
 }

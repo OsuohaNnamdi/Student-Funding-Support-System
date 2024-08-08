@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/funds")
+@RequestMapping("/api/v1/fund")
 public class FundsController {
 
     private final FundsImplementation fundsImplementation;
@@ -22,11 +22,10 @@ public class FundsController {
         this.fundsImplementation = fundsImplementation;
     }
 
-    @PostMapping
-    public ResponseEntity<String> createFund(@RequestPart("fund") Funds fund,
-                                             @RequestPart("logo") MultipartFile logo) {
+    @PostMapping("/add")
+    public ResponseEntity<String> createFund(@RequestBody Funds fund) {
         try {
-            fundsImplementation.saveApplication(fund, logo);
+            fundsImplementation.saveApplication(fund);
             return ResponseEntity.ok("Fund created successfully");
         } catch (IOException e) {
             return ResponseEntity.status(500).body("Failed to create fund: " + e.getMessage());
@@ -35,10 +34,9 @@ public class FundsController {
 
     @PutMapping("/{id}")
     public ResponseEntity<String> updateFund(@PathVariable Long id,
-                                             @RequestPart("fund") Funds fundDetails,
-                                             @RequestPart(value = "logo", required = false) MultipartFile logo) {
+                                             @RequestBody Funds fundDetails) {
         try {
-            fundsImplementation.updateFund(id, fundDetails, logo);
+            fundsImplementation.updateFund(id, fundDetails);
             return ResponseEntity.ok("Fund updated successfully");
         } catch (IOException e) {
             return ResponseEntity.status(500).body("Failed to update fund: " + e.getMessage());
