@@ -1,42 +1,44 @@
 .application-list-container {
   padding: 20px;
-  max-width: 800px;
-  margin: 0 auto;
+}
+
+.application-detail {
   background-color: #f9f9f9;
+  border: 1px solid #ddd;
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.application-card {
-  background-color: #fff;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
+  margin-left: 80px;
   padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 90%; /* Detail takes 90% of the parent container width */
+  max-width: 100%; /* Ensure detail width does not exceed parent width */
+  box-sizing: border-box; /* Include padding and border in width calculation */
+}
+
+.application-detail dl {
+  margin: 0;
+}
+
+.application-row {
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #ddd;
 }
 
-.application-details {
-  margin-bottom: 20px;
+.application-row dt {
+  font-weight: bold;
 }
 
-.application-details h3 {
-  font-size: 24px;
-  margin-bottom: 10px;
-  color: #333;
-}
-
-.application-details p {
-  font-size: 16px;
-  color: #666;
-  margin-bottom: 5px;
+.application-row dd {
+  margin: 0;
 }
 
 .application-actions {
+  margin-top: 20px;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
+  gap: 10px;
 }
 
 .application-actions button {
@@ -44,44 +46,19 @@
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  color: #fff; /* Text color */
   font-size: 16px;
+}
+
+.application-actions button.accept-btn {
+  background-color: #28a745; /* Green background for Accept */
+}
+
+.application-actions button.reject-btn {
+  background-color: #dc3545; /* Red background for Reject */
 }
 
 .application-actions button:disabled {
   cursor: not-allowed;
-  opacity: 0.6;
-}
-
-.application-actions button:first-child {
-  background-color: #1eb2a6;
-  color: #fff;
-}
-
-.application-actions button:first-child:hover:not(:disabled) {
-  background-color: #17a89a;
-}
-
-.application-actions button:last-child {
-  background-color: #ff6b6b;
-  color: #fff;
-}
-
-.application-actions button:last-child:hover:not(:disabled) {
-  background-color: #e55a5a;
-}
-
-.status {
-  font-weight: bold;
-}
-
-.status.pending {
-  color: #ffa500;
-}
-
-.status.accepted {
-  color: #1eb2a6;
-}
-
-.status.rejected {
-  color: #ff6b6b;
+  opacity: 0.6; /* Make disabled buttons less prominent */
 }

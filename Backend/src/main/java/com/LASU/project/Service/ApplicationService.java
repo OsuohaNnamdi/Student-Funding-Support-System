@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface ApplicationService {
 
-    void saveApplication(Application application, MultipartFile documents, MultipartFile document2) throws IOException;
+    void saveApplication(Application application, MultipartFile document1, MultipartFile document2)  throws GeneralException, IOException ;
 
     void deleteById (Long id) throws GeneralException;
 
@@ -18,5 +18,7 @@ public interface ApplicationService {
 
     List<Application> findByEmail(String request) throws GeneralException;
 
-    void approveApplication(Long id, Application request);
+    void approveApplication(Long id);
+
+    void rejectApplication(Long id);
 }

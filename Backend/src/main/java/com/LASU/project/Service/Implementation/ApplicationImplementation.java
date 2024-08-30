@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -23,14 +24,16 @@ public class ApplicationImplementation implements ApplicationService {
     }
 
     @Override
-    public void saveApplication(Application application, MultipartFile documents, MultipartFile document2) throws IOException {
+    public void saveApplication(Application application, MultipartFile document1, MultipartFile document2) throws GeneralException, IOException {
 
-        String documentPath = cloudinaryService.uploadImage(documents);
-        String document2Path = cloudinaryService.uploadImage(document2);
 
-        application.setDocuments(documentPath);
-        application.setDocument2(document2Path);
+        String response = cloudinaryService.uploadImage(document1);
+        String response1 = cloudinaryService.uploadImage(document2);
 
+        application.setPdf(response);
+        application.setFile1(response1);
+        application.setStatus("Pending");
+        application.setApplicationDate(LocalDate.now());
         applicationRepository.save(application);
 
     }
@@ -53,13 +56,24 @@ public class ApplicationImplementation implements ApplicationService {
     }
 
     @Override
-    public void approveApplication(Long id, Application request) {
-        Application application = applicationRepository.findById(id).orElseThrow(() -> new GeneralException("Application Not Found"));
-
-        application.setApproved(request.getApproved());
-        application.setStatus(request.getStatus());
-
+    public void approveApplication(Long id) {
+        
+        Application application = applicationRepository.findById(id)
+            .orElseThrow(() -> new GeneralException("Application Not Found"));
+        application.setApproved(true);
+        application.setStatus("Accepted");
         applicationRepository.save(application);
+        
+    }
+    @Override
+    public void rejectApplication(Long id) {
+        
+        Application application = applicationRepository.findById(id)
+            .orElseThrow(() -> new GeneralException("Application Not Found"));
+        application.setApproved(false);
+        application.setStatus("Rejected");
+        applicationRepository.save(application);
+        
     }
 
 }

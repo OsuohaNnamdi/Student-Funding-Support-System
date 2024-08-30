@@ -1,14 +1,17 @@
+// src/components/ApplicationForm.jsx
 import React, { useState } from 'react';
 import FormSteps from './FormSteps';
-import axiosInstance from '../Auth/axiosInstance' 
+import axiosInstance from '../Auth/axiosInstance';
+import Swal from 'sweetalert2';
 import './application.css';
 
-const ApplicationForm = () => {
+const ApplicationForm = ({ sponsorship }) => {
+  const profile = JSON.parse(localStorage.getItem('profile'));
   const [step, setStep] = useState(0);
   const [completedSteps, setCompletedSteps] = useState(0);
   const [formData, setFormData] = useState({
     name: '',
-    email: '',
+    email: profile.email,
     guardianName: '',
     gpa: '',
     matricNo: '',
@@ -17,7 +20,10 @@ const ApplicationForm = () => {
     statement: '',
     documents: null,
     document2: null,
+    companyName: sponsorship.donorName,
+    companyImage: sponsorship.file
   });
+  const [loading, setLoading] = useState(false);
 
   const steps = [
     'Personal Information',
@@ -62,9 +68,8 @@ const ApplicationForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
-  
-     
     const formDataToSend = new FormData();
     formDataToSend.append('name', formData.name);
     formDataToSend.append('email', formData.email);
@@ -74,6 +79,9 @@ const ApplicationForm = () => {
     formDataToSend.append('enrolled', formData.enrolled);
     formDataToSend.append('financialNeed', formData.financialNeed);
     formDataToSend.append('statement', formData.statement);
+    formDataToSend.append('companyName', formData.companyName);
+    formDataToSend.append('companyImage', formData.companyImage);
+
     if (formData.documents) {
       formDataToSend.append('documents', formData.documents);
     }
@@ -82,16 +90,43 @@ const ApplicationForm = () => {
     }
 
     try {
-      await axiosInstance.post('/api/v1/applications/add', formDataToSend, {
+      await axiosInstance.post('/applications/add', formDataToSend, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
-      alert('Application submitted successfully');
-      
+      Swal.fire({
+        title: 'Success!',
+        text: 'Application submitted successfully',
+        icon: 'success',
+        confirmButtonText: 'OK',
+      });
+      setFormData({
+        name: '',
+        email: profile.email,
+        guardianName: '',
+        gpa: '',
+        matricNo: '',
+        enrolled: false,
+        financialNeed: '',
+        statement: '',
+        documents: null,
+        document2: null,
+        companyName: '',
+        companyImage: ''
+      });
+      setStep(0);
+      setCompletedSteps(0);
     } catch (error) {
       console.error('Failed to submit application:', error);
-      alert('Failed to submit application');
+      Swal.fire({
+        title: 'Error!',
+        text: 'Failed to submit application',
+        icon: 'error',
+        confirmButtonText: 'OK',
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -102,56 +137,77 @@ const ApplicationForm = () => {
         {step === 0 && (
           <div>
             <h2>Personal Information</h2>
+            <label htmlFor="name">Full Name</label>
             <input
               type="text"
+              id="name"
               name="name"
               placeholder="Full Name"
               value={formData.name}
               onChange={handleChange}
               required
             />
+            <label htmlFor="email">Email</label>
             <input
-              type="text"
+              type="email"
+              id="email"
               name="email"
               placeholder="Email"
               value={formData.email}
               onChange={handleChange}
+              
               required
             />
+            <label htmlFor="guardianName">Parent/Guardian Name</label>
             <input
               type="text"
+              id="guardianName"
               name="guardianName"
               placeholder="Parent/Guardian Name"
               value={formData.guardianName}
               onChange={handleChange}
               required
             />
+            
           </div>
         )}
         {step === 1 && (
           <div>
             <h2>Academic Details</h2>
+            <label htmlFor="gpa">GPA</label>
             <input
-              type="number"
+              type="text"
+              id="gpa"
               name="gpa"
-              placeholder="Minimum GPA (3.5)"
+              placeholder="GPA"
               value={formData.gpa}
               onChange={handleChange}
               required
             />
-            <div>
-              <h4>Upload Result</h4>
-              <input
-                type="file"
-                name="documents"
-                onChange={handleChange}
-                required
-              />
-            </div>
+            <label htmlFor="matricNo">Matric Number</label>
+            <input
+              type="text"
+              id="matricNo"
+              name="matricNo"
+              placeholder="Matric Number"
+              value={formData.matricNo}
+              onChange={handleChange}
+              required
+            />
+            <label htmlFor="statement">Statement of Purpose</label>
             <textarea
+              id="statement"
               name="statement"
               placeholder="Statement of Purpose"
               value={formData.statement}
+              onChange={handleChange}
+              required
+            ></textarea>
+            <label htmlFor="documents">Upload Documents</label>
+            <input
+              type="file"
+              id="documents"
+              name="documents"
               onChange={handleChange}
               required
             />
@@ -160,28 +216,24 @@ const ApplicationForm = () => {
         {step === 2 && (
           <div>
             <h2>Financial Information</h2>
+            <label htmlFor="financialNeed">Financial Need</label>
             <textarea
+              id="financialNeed"
               name="financialNeed"
-              placeholder="Reason For Sponsorship"
+              placeholder="Describe your financial need"
               value={formData.financialNeed}
               onChange={handleChange}
               required
-            />
-            <input
-              type="text"
-              name="matricNo"
-              placeholder="Matriculation Number"
-              value={formData.matricNo}
-              onChange={handleChange}
-              required
-            />
+            ></textarea>
           </div>
         )}
         {step === 3 && (
           <div>
-            <h2>Letter of Recommendation</h2>
+            <h2>Document Upload</h2>
+            <label htmlFor="document2">Letter of Recommendation</label>
             <input
               type="file"
+              id="document2"
               name="document2"
               onChange={handleChange}
               required
@@ -189,18 +241,9 @@ const ApplicationForm = () => {
           </div>
         )}
         <div className="form-navigation">
-          <button type="button" onClick={handlePrevious} disabled={step === 0}>
-            Previous
-          </button>
-          {step === steps.length - 1 ? (
-            <button type="submit" disabled={!isStepValid()}>
-              Submit
-            </button>
-          ) : (
-            <button type="button" onClick={handleNext} disabled={!isStepValid()}>
-              Next
-            </button>
-          )}
+          {step > 0 && <button type="button" onClick={handlePrevious}>Previous</button>}
+          {step < steps.length - 1 && <button type="button" onClick={handleNext} disabled={!isStepValid()}>Next</button>}
+          {step === steps.length - 1 && <button type="submit" disabled={loading}>Submit</button>}
         </div>
       </form>
     </div>

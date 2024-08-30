@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import ClipLoader from 'react-spinners/ClipLoader';
 import './Auth.css';
 
 const Auth = () => {
@@ -10,6 +12,7 @@ const Auth = () => {
   });
 
   const [isStudent, setIsStudent] = useState(true);
+  const [loading, setLoading] = useState(false);  // Loading state
   const nav = useNavigate();
 
   const handleChange = (event) => {
@@ -27,7 +30,8 @@ const Auth = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    try {
+    setLoading(true);  // Show spinner
+     try {
       const url = 'http://localhost:8080/api/v1/login';
       const response = await axios.post(url, formData);
       const { profileDTO, token } = response.data;
@@ -48,15 +52,24 @@ const Auth = () => {
       }
 
       localStorage.setItem('profile', JSON.stringify(profileDTO));
-      localStorage.setItem('MatricNo', responseMatricNumber);
       localStorage.setItem('jwtToken', token);
 
-      alert('Login Successful');
-      nav('/');
-      window.location.reload();
+      Swal.fire({
+        icon: 'success',
+        title: 'Login Successful',
+        text: 'You have been successfully logged in.'
+      }).then(() => {
+        nav('/');
+      });
     } catch (error) {
       console.error('Login error', error);
-      alert('Login failed!');
+      Swal.fire({
+        icon: 'error',
+        title: 'Login Failed',
+        text: 'There was an error logging in. Please try again.'
+      });
+    } finally {
+      setLoading(false);  // Hide spinner
     }
   };
 
@@ -81,31 +94,27 @@ const Auth = () => {
           <h2>Login as {isStudent ? 'Student' : 'Funder'}</h2>
           <form onSubmit={handleSubmit} className="form">
             {isStudent ? (
-              <>
-                <div className="form-group">
-                  <label>Matriculation Number:</label>
-                  <input
-                    type="text"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-              </>
+              <div className="form-group">
+                <label>Matriculation Number:</label>
+                <input
+                  type="text"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
             ) : (
-              <>
-                <div className="form-group">
-                  <label>Email:</label>
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-              </>
+              <div className="form-group">
+                <label>Email:</label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
             )}
             <div className="form-group">
               <label>Password:</label>
@@ -117,7 +126,13 @@ const Auth = () => {
                 required
               />
             </div>
-            <button type="submit">Login</button>
+            <button type="submit" disabled={loading}>
+              {loading ? (
+                <ClipLoader color="#fff" loading={loading} size={20} />
+              ) : (
+                'Login'
+              )}
+            </button>
             <p>
               Don't have an account?{' '}
               <span className="link" onClick={() => nav('/register')}>

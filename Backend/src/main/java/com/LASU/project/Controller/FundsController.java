@@ -23,7 +23,7 @@ public class FundsController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<String> createFund(@RequestBody Funds fund) {
+    public ResponseEntity<?> createFund(@RequestBody Funds fund) {
         try {
             fundsImplementation.saveApplication(fund);
             return ResponseEntity.ok("Fund created successfully");
@@ -33,12 +33,12 @@ public class FundsController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateFund(@PathVariable Long id,
+    public ResponseEntity<?> updateFund(@PathVariable Long id,
                                              @RequestBody Funds fundDetails) {
         try {
             fundsImplementation.updateFund(id, fundDetails);
             return ResponseEntity.ok("Fund updated successfully");
-        } catch (IOException e) {
+        } catch (GeneralException e) {
             return ResponseEntity.status(500).body("Failed to update fund: " + e.getMessage());
         }
     }

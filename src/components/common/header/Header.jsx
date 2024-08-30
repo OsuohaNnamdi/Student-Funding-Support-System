@@ -9,8 +9,8 @@ const Header = () => {
   const nav = useNavigate();
 
   const userType = localStorage.getItem("TYPE");
-  const userStudentType = localStorage.getItem("TYPES");
-  const userSPONSORType = localStorage.getItem("TYPESS");
+  const userSPONSORType = localStorage.getItem("TYPES");
+  const userStudentType = localStorage.getItem("TYPESS");
 
   console.log(userStudentType);
   const logOut = () => {
@@ -76,10 +76,10 @@ const Header = () => {
             <Link to='/funds'>Payment</Link>
           </li>
           <li>
-            <Link to='/sponsors'>About</Link>
+            <Link to='/sponsors'>Sponsors</Link>
           </li>
           <li>
-            <Link to='/addfunds'>About</Link>
+            <Link to='/addfunds'>Add Funds</Link>
           </li>
           <li>
             <Link onClick={logOut}>Log out</Link>

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import './FundsForm.css'; 
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css'; // Import SweetAlert2 styles
 import axiosInstance from '../Auth/axiosInstance';
+import './FundsForm.css';
 
 const FundsForm = () => {
   const [formData, setFormData] = useState({
@@ -10,6 +12,7 @@ const FundsForm = () => {
     description: ''
   });
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false); // Manage loading state
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -21,9 +24,15 @@ const FundsForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true); // Set loading to true
+
     try {
       await axiosInstance.post('/fund/add', formData);
-      alert('Fund added successfully!');
+      Swal.fire({
+        icon: 'success',
+        title: 'Success!',
+        text: 'Fund added successfully!',
+      });
       setFormData({
         name: '',
         contact: '',
@@ -31,7 +40,14 @@ const FundsForm = () => {
         description: ''
       });
     } catch (err) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Failed to add fund.',
+      });
       setError('Failed to add fund.');
+    } finally {
+      setLoading(false); // Reset loading state
     }
   };
 
@@ -79,8 +95,31 @@ const FundsForm = () => {
           required
         ></textarea>
 
-        <button type="submit">Add Fund</button>
+        <button type="submit" className="submit-btn">
+          {loading ? (
+            <div
+              style={{
+                border: '4px solid rgba(0, 0, 0, 0.1)',
+                borderRadius: '50%',
+                borderTop: '4px solid #3498db',
+                width: '20px',
+                height: '20px',
+                animation: 'spin 1s linear infinite',
+              }}
+            />
+          ) : (
+            'Add Fund'
+          )}
+        </button>
       </form>
+      <style>
+        {`
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        `}
+      </style>
     </div>
   );
 };

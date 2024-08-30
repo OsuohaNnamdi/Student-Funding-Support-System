@@ -30,11 +30,11 @@ public class FundsImplementation implements FundsService {
     }
 
     @Override
-    public void updateFund(Long id, Funds fundDetails) throws IOException {
+    public void updateFund(Long id, Funds fundDetails) throws GeneralException {
 
 
         Funds existingFund = fundsRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Fund not found"));
+                .orElseThrow(() -> new GeneralException("Fund not found"));
 
         existingFund.setName(fundDetails.getName());
         existingFund.setContact(fundDetails.getContact());

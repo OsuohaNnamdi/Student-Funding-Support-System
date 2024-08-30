@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css'; // Import SweetAlert2 styles
 import './FundsTable.css';
 import Back from '../common/back/Back';
 import axiosInstance from '../Auth/axiosInstance';
@@ -13,6 +15,7 @@ const FundsTable = () => {
     amount: '',
     description: ''
   });
+  const [loading, setLoading] = useState(false); // Manage loading state for update and delete operations
 
   useEffect(() => {
     fetchFunds();
@@ -20,7 +23,7 @@ const FundsTable = () => {
 
   const fetchFunds = async () => {
     try {
-      const response = await axiosInstance.get('/funds');
+      const response = await axiosInstance.get('/fund');
       setFunds(response.data);
     } catch (error) {
       console.error('Error fetching funds:', error);
@@ -39,11 +42,27 @@ const FundsTable = () => {
   };
 
   const handleDelete = async (id) => {
-    try {
-      await axiosInstance.delete(`/funds/${id}`);
-      fetchFunds(); 
-    } catch (error) {
-      console.error('Error deleting fund:', error);
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: 'This action cannot be undone!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'No, cancel!',
+    });
+
+    if (result.isConfirmed) {
+      setLoading(true);
+      try {
+        await axiosInstance.delete(`/fund/${id}`);
+        Swal.fire('Deleted!', 'The fund has been deleted.', 'success');
+        fetchFunds();
+      } catch (error) {
+        console.error('Error deleting fund:', error);
+        Swal.fire('Error!', 'Failed to delete the fund.', 'error');
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -60,12 +79,17 @@ const FundsTable = () => {
   };
 
   const handleUpdateSubmit = async () => {
+    setLoading(true);
     try {
-      await axiosInstance.put(`/funds/${selectedFund.id}`, updatedFund);
-      fetchFunds(); 
+      await axiosInstance.put(`/fund/${selectedFund.id}`, updatedFund);
+      Swal.fire('Updated!', 'The fund has been updated.', 'success');
+      fetchFunds();
       handleModalClose();
     } catch (error) {
       console.error('Error updating fund:', error);
+      Swal.fire('Error!', 'Failed to update the fund.', 'error');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -92,8 +116,18 @@ const FundsTable = () => {
                 <td>{fund.amount}</td>
                 <td>{fund.description}</td>
                 <td>
-                  <button onClick={() => handleUpdate(fund)}>Update</button>
-                  <button onClick={() => handleDelete(fund.id)}>Delete</button>
+                  <button
+                    onClick={() => handleUpdate(fund)}
+                    disabled={loading}
+                  >
+                    {loading ? 'Loading...' : 'Update'}
+                  </button>
+                  <button
+                    onClick={() => handleDelete(fund.id)}
+                    disabled={loading}
+                  >
+                    {loading ? 'Deleting...' : 'Delete'}
+                  </button>
                 </td>
               </tr>
             ))}
@@ -137,7 +171,22 @@ const FundsTable = () => {
                 onChange={handleInputChange}
                 required
               ></textarea>
-              <button type="submit">Save</button>
+              <button type="submit">
+                {loading ? (
+                  <div
+                    style={{
+                      border: '4px solid rgba(0, 0, 0, 0.1)',
+                      borderRadius: '50%',
+                      borderTop: '4px solid #3498db',
+                      width: '20px',
+                      height: '20px',
+                      animation: 'spin 1s linear infinite',
+                    }}
+                  />
+                ) : (
+                  'Save'
+                )}
+              </button>
               <button type="button" onClick={handleModalClose}>Cancel</button>
             </form>
           </div>

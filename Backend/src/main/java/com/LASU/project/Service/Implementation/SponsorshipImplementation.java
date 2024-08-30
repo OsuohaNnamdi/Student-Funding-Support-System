@@ -36,11 +36,10 @@ public class SponsorshipImplementation implements SponsorshipService {
     }
 
     @Override
-    public void updateSponsorship(Long id, Sponsorship request, MultipartFile logo) throws GeneralException {
+    public void updateSponsorship(Long id, Sponsorship request) throws GeneralException {
 
         Sponsorship sponsorship = sponsorshipRepository.findById(id).orElseThrow(() -> new GeneralException("Sponsorship with id "+id+" is not present"));
 
-        String response = cloudinaryService.uploadImage(logo);
         if (sponsorship != null){
 
 
@@ -48,9 +47,10 @@ public class SponsorshipImplementation implements SponsorshipService {
             sponsorship.setEmail(request.getEmail());
             sponsorship.setNumStudents(request.getNumStudents());
             sponsorship.setTotalAmount(request.getTotalAmount());
-            sponsorship.setFile(response);
 
             sponsorship.setComments(request.getComments());
+
+            sponsorshipRepository.save(sponsorship);
         }
     }
 

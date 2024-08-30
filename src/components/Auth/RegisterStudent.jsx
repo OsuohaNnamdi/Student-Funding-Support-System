@@ -1,12 +1,18 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 import './register.css';
 
 const faculties = [
-  { name: "Faculty of Arts", departments: ["Department of English", "Department of History", "Department of Philosophy"] },
-  { name: "Faculty of Science", departments: ["Department of Computer Science", "Department of Physics", "Department of Chemistry"] },
-  { name: "Faculty of Social Sciences", departments: ["Department of Economics", "Department of Political Science", "Department of Sociology"] },
+  { name: "Faculty of Arts", departments: ["Department of English", "Department of History", "Department of Philosophy", "Department of Music", "Department of Theatre Arts"] },
+  { name: "Faculty of Science", departments: ["Department of Computer Science", "Department of Physics", "Department of Chemistry", "Department of Mathematics", "Department of Biology"] },
+  { name: "Faculty of Social Sciences", departments: ["Department of Economics", "Department of Political Science", "Department of Sociology", "Department of Psychology", "Department of Anthropology"] },
+  { name: "Faculty of Engineering", departments: ["Department of Civil Engineering", "Department of Mechanical Engineering", "Department of Electrical Engineering", "Department of Chemical Engineering", "Department of Computer Engineering"] },
+  { name: "Faculty of Medicine", departments: ["Department of Anatomy", "Department of Physiology", "Department of Biochemistry", "Department of Pathology", "Department of Pharmacology"] },
+  { name: "Faculty of Law", departments: ["Department of Private Law", "Department of Public Law", "Department of International Law", "Department of Criminal Law", "Department of Legal Studies"] },
+  { name: "Faculty of Education", departments: ["Department of Curriculum Studies", "Department of Educational Psychology", "Department of Guidance and Counseling", "Department of Educational Administration", "Department of Special Education"] },
+  { name: "Faculty of Business Administration", departments: ["Department of Accounting", "Department of Finance", "Department of Marketing", "Department of Management", "Department of Business Law"] },
   // Add more faculties and departments as needed
 ];
 
@@ -24,21 +30,21 @@ const RegisterForm = () => {
 
   const [departments, setDepartments] = useState([]);
   const [isStudent, setIsStudent] = useState(true);
+  const [loading, setLoading] = useState(false); // For loading spinner
   const nav = useNavigate();
 
   const handleRoleSwitch = (role) => {
-  const newAccountType = role === 'student' ? 'STUDENT' : 'SPONSOR';
-  setIsStudent(role === 'student');
-  setFormData((prevData) => ({
-    ...prevData,
-    accountType: newAccountType,
-    faculty: '',
-    department: '',
-    gender: '',
-    organization: role === 'student' ? '' : prevData.organization, // Keep the organization if switching to sponsor
-  }));
-};
-
+    const newAccountType = role === 'student' ? 'STUDENT' : 'SPONSOR';
+    setIsStudent(role === 'student');
+    setFormData((prevData) => ({
+      ...prevData,
+      accountType: newAccountType,
+      faculty: '',
+      department: '',
+      gender: '',
+      organization: role === 'student' ? '' : prevData.organization,
+    }));
+  };
 
   const handleFacultyChange = (event) => {
     const selectedFacultyName = event.target.value;
@@ -54,14 +60,37 @@ const RegisterForm = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setLoading(true);
     const url = 'http://localhost:8080/api/v1/register';
     try {
       await axios.post(url, formData);
-      alert('Registration successful!');
-      // Handle successful response
+      Swal.fire({
+        title: 'Success!',
+        text: 'Registration successful!',
+        icon: 'success',
+        confirmButtonText: 'OK',
+      });
+      setFormData({
+        name: '',
+        email: '',
+        password: '',
+        organization: '',
+        faculty: '',
+        department: '',
+        gender: '',
+        accountType: 'STUDENT',
+      });
+      setDepartments([]);
+      nav('/login');
     } catch (error) {
-      alert('Registration failed!');
-      // Handle error response
+      Swal.fire({
+        title: 'Error!',
+        text: 'Registration failed. Please try again.',
+        icon: 'error',
+        confirmButtonText: 'OK',
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -158,7 +187,13 @@ const RegisterForm = () => {
                 />
               </div>
             )}
-            <button type="submit">Register</button>
+            <button type="submit" disabled={loading}>
+              {loading ? (
+                <span className="spinner"></span>
+              ) : (
+                'Register'
+              )}
+            </button>
             <p>
                Already have an account?{' '}
               <span className="link" onClick={() => nav('/login')}>

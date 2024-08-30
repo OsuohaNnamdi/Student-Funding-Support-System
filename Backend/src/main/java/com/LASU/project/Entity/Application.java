@@ -2,6 +2,8 @@ package com.LASU.project.Entity;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
+
 @Entity
 @Table(name = "Application")
 public class Application {
@@ -25,14 +27,20 @@ public class Application {
             private String financialNeed;
             private String statement;
             private Boolean seen;
+            private String companyName;
+            private String companyImage;
+            private LocalDate applicationDate;
             private Boolean verify;
             private Boolean approved;
             private String status;
-            private String documents;
-            private String document2;
+            private String pdf;
+            private String file1;
+
+    public Application() {
+    }
 
 
-    public Application(Long id, String name, String email, String guardianName, String gpa, String matricNo, boolean enrolled, String financialNeed, String statement, Boolean seen, Boolean verify, Boolean approved, String status, String documents, String document2) {
+    public Application(Long id, String name, String email, String guardianName, String gpa, String matricNo, boolean enrolled, String financialNeed, String statement, Boolean seen, String companyName, String companyImage, LocalDate applicationDate, Boolean verify, Boolean approved, String status, String pdf, String file1) {
         this.id = id;
         this.name = name;
         this.email = email;
@@ -43,11 +51,22 @@ public class Application {
         this.financialNeed = financialNeed;
         this.statement = statement;
         this.seen = seen;
+        this.companyName = companyName;
+        this.companyImage = companyImage;
+        this.applicationDate = applicationDate;
         this.verify = verify;
         this.approved = approved;
         this.status = status;
-        this.documents = documents;
-        this.document2 = document2;
+        this.pdf = pdf;
+        this.file1 = file1;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -130,6 +149,30 @@ public class Application {
         this.verify = verify;
     }
 
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
+    public String getCompanyImage() {
+        return companyImage;
+    }
+
+    public void setCompanyImage(String companyImage) {
+        this.companyImage = companyImage;
+    }
+
+    public LocalDate getApplicationDate() {
+        return applicationDate;
+    }
+
+    public void setApplicationDate(LocalDate applicationDate) {
+        this.applicationDate = applicationDate;
+    }
+
     public Boolean getApproved() {
         return approved;
     }
@@ -146,19 +189,19 @@ public class Application {
         this.status = status;
     }
 
-    public String getDocuments() {
-        return documents;
+    public String getPdf() {
+        return pdf;
     }
 
-    public void setDocuments(String documents) {
-        this.documents = documents;
+    public void setPdf(String pdf) {
+        this.pdf = pdf;
     }
 
-    public String getDocument2() {
-        return document2;
+    public String getFile1() {
+        return file1;
     }
 
-    public void setDocument2(String document2) {
-        this.document2 = document2;
+    public void setFile1(String file1) {
+        this.file1 = file1;
     }
 }

@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css'; // Import SweetAlert2 styles
 import './SponsorshipTable.css'; 
-import Modal from './Modal/Modal'
+import Modal from './Modal/Modal';
 import axiosInstance from '../Auth/axiosInstance';
 
 const SponsorshipTable = () => {
@@ -11,10 +13,10 @@ const SponsorshipTable = () => {
     email: '',
     numStudents: '',
     totalAmount: '',
-    paymentMethod: '',
     comments: '',
   });
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false); // Manage loading state for async operations
 
   useEffect(() => {
     fetchSponsorships();
@@ -24,13 +26,12 @@ const SponsorshipTable = () => {
     try {
       const response = await axiosInstance.get('/sponsorships');
       setSponsorships(response.data);
-      console.log(response);
     } catch (error) {
       console.error('Error fetching sponsorships:', error);
     }
   };
 
-  const handleUpdateClick = async (sponsorship) => {
+  const handleUpdateClick = (sponsorship) => {
     setSelectedSponsorship(sponsorship);
     setFormData({
       donorName: sponsorship.donorName,
@@ -44,28 +45,49 @@ const SponsorshipTable = () => {
   };
 
   const handleDeleteClick = async (id) => {
-    try {
-      await axiosInstance.delete(`/sponsorships/${id}`);
-      fetchSponsorships(); // Refresh the list after deletion
-    } catch (error) {
-      console.error('Error deleting sponsorship:', error);
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: 'This action cannot be undone!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'No, cancel!',
+    });
+
+    if (result.isConfirmed) {
+      setLoading(true);
+      try {
+        await axiosInstance.delete(`/sponsorships/${id}`);
+        Swal.fire('Deleted!', 'The sponsorship has been deleted.', 'success');
+        fetchSponsorships(); // Refresh the list after deletion
+      } catch (error) {
+        console.error('Error deleting sponsorship:', error);
+        Swal.fire('Error!', 'Failed to delete the sponsorship.', 'error');
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
   const handleFormChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
+    setFormData(prevData => ({ ...prevData, [name]: value }));
   };
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       await axiosInstance.put(`/sponsorships/${selectedSponsorship.id}`, formData);
+      Swal.fire('Updated!', 'The sponsorship has been updated.', 'success');
       fetchSponsorships(); 
       setIsModalOpen(false);
       setSelectedSponsorship(null); 
     } catch (error) {
       console.error('Error updating sponsorship:', error);
+      Swal.fire('Error!', 'Failed to update the sponsorship.', 'error');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -79,7 +101,6 @@ const SponsorshipTable = () => {
             <th>Email</th>
             <th>Number of Students</th>
             <th>Total Amount</th>
-            <th>Payment Method</th>
             <th>Comments</th>
             <th>Actions</th>
           </tr>
@@ -91,11 +112,20 @@ const SponsorshipTable = () => {
               <td>{sponsorship.email}</td>
               <td>{sponsorship.numStudents}</td>
               <td>{sponsorship.totalAmount}</td>
-              <td>{sponsorship.paymentMethod}</td>
               <td>{sponsorship.comments}</td>
               <td>
-                <button onClick={() => handleUpdateClick(sponsorship)}>Update</button>
-                <button onClick={() => handleDeleteClick(sponsorship.id)}>Delete</button>
+                <button
+                  onClick={() => handleUpdateClick(sponsorship)}
+                  disabled={loading}
+                >
+                  {loading ? 'Loading...' : 'Update'}
+                </button>
+                <button
+                  onClick={() => handleDeleteClick(sponsorship.id)}
+                  disabled={loading}
+                >
+                  {loading ? 'Deleting...' : 'Delete'}
+                </button>
               </td>
             </tr>
           ))}
@@ -151,17 +181,6 @@ const SponsorshipTable = () => {
             />
           </div>
           <div className="form-group">
-            <label htmlFor="paymentMethod">Payment Method</label>
-            <input
-              type="text"
-              id="paymentMethod"
-              name="paymentMethod"
-              value={formData.paymentMethod}
-              onChange={handleFormChange}
-              required
-            />
-          </div>
-          <div className="form-group">
             <label htmlFor="comments">Comments</label>
             <textarea
               id="comments"
@@ -171,7 +190,22 @@ const SponsorshipTable = () => {
               required
             />
           </div>
-          <button type="submit" className="submit-btn">Update Sponsorship</button>
+          <button type="submit" className="submit-btn">
+            {loading ? (
+              <div
+                style={{
+                  border: '4px solid rgba(0, 0, 0, 0.1)',
+                  borderRadius: '50%',
+                  borderTop: '4px solid #3498db',
+                  width: '20px',
+                  height: '20px',
+                  animation: 'spin 1s linear infinite',
+                }}
+              />
+            ) : (
+              'Update Sponsorship'
+            )}
+          </button>
         </form>
       </Modal>
     </div>

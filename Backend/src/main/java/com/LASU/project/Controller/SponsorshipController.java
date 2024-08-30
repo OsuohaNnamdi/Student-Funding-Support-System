@@ -38,10 +38,9 @@ public class SponsorshipController {
 
     @PutMapping("/{id}")
     public ResponseEntity<String> updateSponsorship(@PathVariable Long id,
-                                                    @ModelAttribute Sponsorship sponsorshipDetails,
-                                                    @RequestPart("logo") MultipartFile logo) {
+                                                    @ModelAttribute Sponsorship sponsorshipDetails) {
         try {
-            sponsorshipImplementation.updateSponsorship(id, sponsorshipDetails, logo);
+            sponsorshipImplementation.updateSponsorship(id, sponsorshipDetails);
             return ResponseEntity.ok("Sponsorship updated successfully");
         } catch (GeneralException e) {
             return ResponseEntity.status(500).body("Failed to update sponsorship: " + e.getMessage());

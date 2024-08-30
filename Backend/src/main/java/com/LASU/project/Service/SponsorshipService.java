@@ -14,7 +14,7 @@ public interface SponsorshipService {
 
     void  saveSponsorship(Sponsorship sponsorship, MultipartFile logo) throws GeneralException, IOException;
 
-    void updateSponsorship(Long id, Sponsorship updatedSponsorship, MultipartFile logo) throws GeneralException;
+    void updateSponsorship(Long id, Sponsorship updatedSponsorship) throws GeneralException;
 
     List<Sponsorship> findAllSponsorships()  throws GeneralException;
 

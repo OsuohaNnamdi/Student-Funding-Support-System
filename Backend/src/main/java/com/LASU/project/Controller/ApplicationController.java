@@ -3,6 +3,7 @@ package com.LASU.project.Controller;
 import com.LASU.project.Entity.Application;
 import com.LASU.project.Exception.GeneralException;
 import com.LASU.project.Service.ApplicationService;
+import org.springframework.http.HttpStatus;
 import com.LASU.project.Service.Implementation.ApplicationImplementation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,27 +24,39 @@ public class ApplicationController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<String> createApplication(@ModelAttribute Application application,
-                                                    @RequestPart("documents") MultipartFile documents,
-                                                    @RequestPart("document2") MultipartFile document2) {
+    public ResponseEntity<?> createApplication(
+            @ModelAttribute Application application,
+            @RequestPart("documents") MultipartFile documents,
+            @RequestPart("document2") MultipartFile document2) {
         try {
             applicationImplementation.saveApplication(application, documents, document2);
             return ResponseEntity.ok("Application created successfully");
-        } catch (IOException e) {
-            return ResponseEntity.status(500).body("Failed to create application: " + e.getMessage());
+    } catch (GeneralException | IOException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
-    }
+   }
+
 
     @PutMapping("/approve/{id}")
-    public ResponseEntity<String> approveApplication(@PathVariable Long id, @RequestBody Application application) {
+    public ResponseEntity<?> approveApplication(@PathVariable Long id) {
         try {
-            applicationImplementation.approveApplication(id, application);
+            applicationImplementation.approveApplication(id);
             return ResponseEntity.ok("Application approved successfully");
         } catch (GeneralException e) {
             return ResponseEntity.status(500).body("Failed to approve application: " + e.getMessage());
         }
     }
     
+    @PutMapping("/reject/{id}")
+    public ResponseEntity<?> rejectApplication(@PathVariable Long id) {
+        try {
+            applicationImplementation.rejectApplication(id);
+            return ResponseEntity.ok("Application rejected successfully");
+    } catch (GeneralException e) {
+        return ResponseEntity.status(500).body("Failed to reject application: " + e.getMessage());
+      }
+    }
+
 
     @GetMapping
     public ResponseEntity<List<Application>> getAllApplications() {
@@ -56,7 +69,7 @@ public class ApplicationController {
     }
 
     @GetMapping("/{request}")
-    public ResponseEntity<List<Application>> getAllByEmail(@PathVariable String request) {
+    public ResponseEntity<List<?>> getAllByEmail(@PathVariable String request) {
         try {
             List<Application> applications = applicationImplementation.findByEmail(request);
             return ResponseEntity.ok(applications);
@@ -66,7 +79,7 @@ public class ApplicationController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteApplication(@PathVariable Long id) {
+    public ResponseEntity<?> deleteApplication(@PathVariable Long id) {
         try {
             applicationImplementation.deleteById(id);
             return ResponseEntity.ok("Application deleted successfully");

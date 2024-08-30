@@ -1,14 +1,13 @@
-// src/components/ScholarShip.js
 import React, { useState, useEffect } from "react";
 import Back from "../common/back/Back";
 import "./Scholarship.css";
 import ApplicationForm from "../StudentApplication/ApplicationForm";
-import { ScholarShipCard } from './ScholarshipCard.jsx';
 import axiosInstance from '../Auth/axiosInstance';
+import { ScholarShipCard } from "./ScholarshipCard";
 
 
 const ScholarShip = () => {
-  const [selectedBlog, setSelectedBlog] = useState(null);
+  const [selectedSponsorship, setSelectedSponsorship] = useState(null);
   const [sponsorships, setSponsorships] = useState([]);
 
   useEffect(() => {
@@ -16,6 +15,7 @@ const ScholarShip = () => {
       try {
         const response = await axiosInstance.get('/sponsorships');
         setSponsorships(response.data);
+        console.log(response.data);
       } catch (error) {
         console.error('Failed to fetch sponsorships:', error);
       }
@@ -24,8 +24,8 @@ const ScholarShip = () => {
     fetchSponsorships();
   }, []);
 
-  const handleEnrollClick = (id) => {
-    setSelectedBlog(id);
+  const handleEnrollClick = (sponsorship) => {
+    setSelectedSponsorship(sponsorship);
   };
 
   return (
@@ -33,10 +33,15 @@ const ScholarShip = () => {
       <Back title="Scholarship List" />
       <section className="blog padding">
         <div className="container">
-          {selectedBlog ? (
-            <ApplicationForm blogId={selectedBlog} />
+          {selectedSponsorship ? (
+            <ApplicationForm
+              sponsorship={selectedSponsorship}
+            />
           ) : (
-            <ScholarShipCard sponsorships={sponsorships} onEnrollClick={handleEnrollClick} />
+            <ScholarShipCard
+              sponsorships={sponsorships}
+              onEnrollClick={handleEnrollClick}
+            />
           )}
         </div>
       </section>
