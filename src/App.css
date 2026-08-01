@@ -86,7 +86,7 @@ p {
 }
 
 .back {
-  background-image: url("../public/images/images\ \(2\).jpeg");
+  background-image: url("/public/images/1.png");
   background-size: cover;
   background-attachment: fixed;
   position: absolute;

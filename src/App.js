@@ -1,55 +1,64 @@
-import "./App.css"
-import Header from "./components/common/header/Header"
-import { Route, BrowserRouter, Routes } from "react-router-dom"
-import About from "./components/about/About"
-import AdminDashboard from "./components/Admin/AdminDashboard"
-import Dashboard from "./components/Dashboard/Dashboard"
-import Home from "./components/home/Home"
-import Pricing from "./components/pricing/Pricing"
-import RegisterStudent from "./components/Auth/RegisterStudent"
-import Login from "./components/Auth/Login"
-import AppliedScholarships from "./components/AppliedScholarship/AppliedScholarships"
-import AddScholarshipForm from "./components/Admin/AddScholarshipForm"
-import FundsTable from "./components/Admin/FundsTable"
-import ScholarShip from "./components/Scholarship/Scholarship"
-import SponsorshipTable from "./components/Admin/SponsorshipTable"
-import FundsForm from "./components/Admin/FundsForm"
+import React from 'react';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
+import { ToastProvider } from './context/ToastContext';
+import { ConfirmProvider } from './context/ConfirmContext';
+import ProtectedRoute from './components/ProtectedRoute';
+import Layout from './components/Layout';
+import { ROLES } from './constants/roles';
 
+import HomePage from './pages/HomePage';
+import AboutPage from './pages/AboutPage';
+import NotFoundPage from './pages/NotFoundPage';
 
+import LoginPage from './pages/auth/LoginPage';
+import RegisterPage from './pages/auth/RegisterPage';
 
+import ScholarshipsPage from './pages/scholarships/ScholarshipsPage';
+import MyApplicationsPage from './pages/student/MyApplicationsPage';
+import PricingPage from './pages/pricing/PricingPage';
+import AccessRequestPage from './pages/AccessRequestPage';
+
+import ManageScholarshipsPage from './pages/admin/ManageScholarshipsPage';
+import ManageFundsPage from './pages/admin/ManageFundsPage';
+import ApplicationsReviewPage from './pages/admin/ApplicationsReviewPage';
+import AccessRequestsReviewPage from './pages/admin/AccessRequestsReviewPage';
 
 function App() {
-
   return (
-    <>
-      <BrowserRouter>
+    <ThemeProvider>
+      <ToastProvider>
+        <ConfirmProvider>
+          <BrowserRouter>
+            <AuthProvider>
+              <Routes>
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/register" element={<RegisterPage />} />
 
-        <Header />
+                <Route element={<Layout />}>
+                  <Route path="/" element={<HomePage />} />
+                  <Route path="/about" element={<AboutPage />} />
+                  <Route path="/pricing" element={<PricingPage />} />
+                  <Route path="/scholarships" element={<ScholarshipsPage />} />
 
-        
-        <Routes>
+                  <Route path="/applications/mine" element={<ProtectedRoute><MyApplicationsPage /></ProtectedRoute>} />
+                  <Route path="/access-requests" element={<ProtectedRoute><AccessRequestPage /></ProtectedRoute>} />
 
-          <Route exact path='/' element={<Home/>} />
-          <Route exact path='/sponsors' element={<SponsorshipTable/>} />
-          <Route exact path='/addfunds' element={<FundsForm/>} />
-          <Route exact path='/funds' element={<FundsTable/>} />
-          <Route exact path='/scholarship' element={<ScholarShip/>} />
-          <Route exact path='/forms' element={<AddScholarshipForm/>} />
-          <Route exact path='/applications' element={<AppliedScholarships/>} />
-          <Route exact path='/register' element={<RegisterStudent/>} />
-          <Route exact path='/dashboard' element={<Dashboard/>} />
-          <Route exact path='/admin' element={<AdminDashboard/>} />
-          <Route path='/about' element={<About />} />
-          <Route exact path='/login' element={<Login/>} />
-          <Route exact path='/pricing' element={<Pricing />} />
+                  <Route path="/admin/applications" element={<ProtectedRoute allow={[ROLES.ADMIN]}><ApplicationsReviewPage /></ProtectedRoute>} />
+                  <Route path="/admin/scholarships" element={<ProtectedRoute allow={[ROLES.ADMIN]}><ManageScholarshipsPage /></ProtectedRoute>} />
+                  <Route path="/admin/funds" element={<ProtectedRoute allow={[ROLES.ADMIN]}><ManageFundsPage /></ProtectedRoute>} />
+                  <Route path="/admin/access-requests" element={<ProtectedRoute allow={[ROLES.ADMIN]}><AccessRequestsReviewPage /></ProtectedRoute>} />
 
-
-          </Routes>
-
-      </BrowserRouter>
-    </>
-  )
+                  <Route path="*" element={<NotFoundPage />} />
+                </Route>
+              </Routes>
+            </AuthProvider>
+          </BrowserRouter>
+        </ConfirmProvider>
+      </ToastProvider>
+    </ThemeProvider>
+  );
 }
 
-export default App
- {/* <Route exact path='/scholarship' element={<ScholarShip/>} /> */}
+export default App;
